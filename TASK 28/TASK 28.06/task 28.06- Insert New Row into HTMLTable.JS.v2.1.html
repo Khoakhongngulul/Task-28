@@ -32,40 +32,55 @@
             <td>Zent</td>
             <td>19</td>
           </tr>
-      <tbody>
+        </tbody>
     </table>
-    <button class="btn btn-info" onclick="onBtnInsertNewRowToTableClick()">Thêm dòng mới vào bảng:  "Mol", "An", "29"</button>
-    <button class="btn btn-warning" >Thêm dòng mới vào bảng:  "Alan", "Pham", "37"</button>  <!-- phải làm nút này -->
+    <button class="btn btn-info" onclick="onBtnInsertNewRowToTableClick()">Thêm dòng mới vào bảng: "Mol", "An",
+      "29"</button>
+    <button class="btn btn-warning" onclick="onBtnInsertNewRowByClick()">Thêm dòng mới vào bảng: "Alan", "Pham",
+      "37"</button> <!-- phải làm nút này -->
   </div>
   <script>
     "use strict";
     /*** REGION 1 - Global variables - Vùng khai báo biến, hằng số, tham số TOÀN CỤC */
     const gCOL_FIRSTNAME = 0;
     const gCOL_LASTNAME = 1;
-    const gCOL_AGE = 2; 
+    const gCOL_AGE = 2;
+    const vCreate_New_Row_At_The_End = -1;
     /*** REGION 2 - Vùng gán / thực thi sự kiện cho các elements */
 
     /*** REGION 3 - Event handlers - Vùng khai báo các hàm xử lý sự kiện */
-    
+
     // TODO 2: đọc hiểu mã nguồn để rõ cách thức tạo ra table, thêm dòng sử dụng Js
     // hàm xử lý sự kiện thêm mới dòng vào table
     function onBtnInsertNewRowToTableClick() {
-      "use strict";
-      const vEND_OF_TABLE = -1;
-      var vPersonTable = document.getElementById("table-person");  //truy xuất bảng
-      var vPersonTableBody = document.getElementsByTagName("tbody")[0];  //truy xuất body của bảng 
-      // insert to the end of table, thêm row mới vào bảng( <tr> </tr>)
-      var vNewRow = vPersonTableBody.insertRow(vEND_OF_TABLE);
-      // them moi 03 cell (03 ô) (<td> </td> 
-      var vCellFirstName = vNewRow.insertCell(gCOL_FIRSTNAME);
-      var vCellLastName = vNewRow.insertCell(gCOL_LASTNAME);
-      var vCellAge = vNewRow.insertCell(gCOL_AGE);
-      //gán giá trị cho các ô
+      debugger;
+      "use strict"
+      let vPersonTable = document.getElementById("table-person") //truy xuat bang
+      let vPersonTableRowIndex = document.getElementsByTagName("tbody")[0] //truy xuat phan tu tbody(table row ) cua bang 
+      var vNewTableRow = vPersonTableRowIndex.insertRow(vCreate_New_Row_At_The_End)
+      //them 3 cells vao row moi duoc tao
+      var vCellFirstName = vNewTableRow.insertCell(gCOL_FIRSTNAME)
+      var vCellLastName = vNewTableRow.insertCell(gCOL_LASTNAME)
+      var vCellAge = vNewTableRow.insertCell(gCOL_AGE)
+
       vCellFirstName.innerHTML = "Mol";
       vCellLastName.innerHTML = "Ann";
       vCellAge.innerHTML = "29";
     }
-    
+    function onBtnInsertNewRowByClick() {
+      let vPerson = document.getElementById("table-person") //truy xuat
+      let vPersonTboDy = document.getElementsByTagName("tbody")[0] //truy xuat tbody ben trong [0]
+      let vAddNewRow = vPersonTboDy.insertRow(vCreate_New_Row_At_The_End) //tao mot row moi ben trong tbody 
+      
+      let vFirstNameCells = vAddNewRow.insertCell(gCOL_FIRSTNAME)
+      let vLastNameCells = vAddNewRow.insertCell(gCOL_LASTNAME)
+      let vAge = vAddNewRow.insertCell(gCOL_AGE)
+
+      vFirstNameCells.innerHTML="Alan"
+      vLastNameCells.innerHTML = "Pham"
+      vAge.innerHTML="37"
+    }
+
     /*** REGION 4 - Common funtions - Vùng khai báo hàm dùng chung trong toàn bộ chương trình*/
 
   </script>
