@@ -11,7 +11,7 @@
 
 <body>
   <div class="container">
-    <h2>Lucky Dice Casino  - Dice History (lịch sử xúc xắc)</h2>
+    <h2>Lucky Dice Casino-Dice History (lịch sử xúc xắc)</h2>
     <div class="row">
       <button class = "btn btn-info" onclick="onCreateSampleDiceHistoryTableClick()"> Tạo bảng lịch sử chơi xúc xắc - Create Dice History Table</button>
     </div>
@@ -22,7 +22,7 @@
             <th>Game</th>
             <th>Dice</th>
           </tr>
-        </thead>
+        </thead>  
         <tbody>
           <!-- tbody chưa có dòng dữ liệu nào-->
         </tbody>
@@ -46,13 +46,13 @@
     /*** REGION 3 - Event handlers - Vùng khai báo các hàm xử lý sự kiện */
     //create table of sample dice history
     //tạo bảng trên dữ liệu Dice HIstory cho trước 
-    function onCreateSampleDiceHistoryTableClick() {
-      "use strict";
+    function onCreateSampleDiceHistoryTableClick() { debugger;
+      "use strict"; 
       // subtask 1: chuyển JSON text sang Object
       var vSampleDiceHistory = { dices: [-1], status: -1 };
       vSampleDiceHistory = JSON.parse(gJsonDiceHistoryResponseText);
       console.log("Đối tượng Json:")
-      console.log(vSampleDiceHistory);  //ghi dối tượgn ra connsole
+      console.log(vSampleDiceHistory);  //ghi dối tượng ra connsole
       console.log("Mảng lịch sử xác suất - history of dices ") 
       console.log( vSampleDiceHistory.dices); //ghi mảng ra console
       
@@ -60,12 +60,31 @@
       var vDiceHistoryTable = document.getElementById("table-dice-history");
       // truy xuất được phần tử tbody trong table
       // cách truy xuất là bằng TagName, với cách này ta sẽ có một mảng các tbody trong bảng. ta lấy phần tử số 0 của mảng này 
-      var vTableBody = vDiceHistoryTable.getElementsByTagName("tbody")[0];
+      var vTableBody = vDiceHistoryTable.getElementsByTagName("tbody")[0]; //truy xuat vao tbody 
       
+
+      for(var bIterator = 0 ; bIterator < vSampleDiceHistory.dices.length ; bIterator++){
+        var bNewRow = vTableBody.insertRow(gEND_OF_ROW_COL)
+
+        var bNewGameCells = bNewRow.insertCell(gCOL_GAMES)
+        var bNewDicesCells = bNewRow.insertCell(gCOL_DICE)
+        var gamePlayed = bIterator +1
+        bNewGameCells.innerHTML = gamePlayed
+        for(var bJterator = 0 ; bJterator < vSampleDiceHistory.dices.length ; bJterator++){
+          var vDicesIndex = Math.floor(Math.random()*vSampleDiceHistory.dices.length) //random index in dices array
+          var jRandomDices = vSampleDiceHistory.dices[vDicesIndex]
+          bNewDicesCells.innerHTML = jRandomDices
+          break;
+        }
+
+      }
+        
+
       // -- thêm các dòng vào bảng 
       
+    
     }
-
+    
     /*** REGION 4 - Common funtions - Vùng khai báo hàm dùng chung trong toàn bộ chương trình*/
   </script>
 </body>
