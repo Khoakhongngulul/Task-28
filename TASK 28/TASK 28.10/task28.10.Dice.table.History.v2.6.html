@@ -14,7 +14,7 @@
         <input type="email" class="form-control" id="user-name" placeholder="Enter username" name="username">
       </div>
       <div class="form-group">
-        <button type="button" class="btn btn-primary">Show Dice History Table</button>
+        <button type="button" class="btn btn-primary" onclick="onShowHistoryDices()">Show Dice History Table</button>
       </div>
     <div id="log-result" class="mt-5"></div>
     <div class="mt-5">
@@ -36,13 +36,75 @@
     'use strict';
     /*** REGION 1 - Global variables - Vùng khai báo biến, hằng số, tham số TOÀN CỤC */
     const gEND_OF_ROW_COL = -1;
-
+    const g_COL_GAME = 0;
+    const g_COL_DICES = 1;
+    const gREQUEST_STATUS_OK = 200;
+    const gREQUEST_READY_STATUS_FINISH_AND_OK = 4;
+    const gBASE_URL = "http://203.171.20.210:8080/devcamp-lucky-dice";
+    
     /*** REGION 2 - Vùng gán / thực thi sự kiện cho các elements */
 
     /*** REGION 3 - Event handlers - Vùng khai báo các hàm xử lý sự kiện */
-    
-    /*** REGION 4 - Common funtions - Vùng khai báo hàm dùng chung trong toàn bộ chương trình*/
+    function onShowHistoryDices (){ debugger;
+      HistoryDicesApi()
 
+    }
+    /*** REGION 4 - Common funtions - Vùng khai báo hàm dùng chung trong toàn bộ chương trình*/
+    function HistoryDicesApi(){
+      "use strict"
+      let vUser = {
+        userName:""
+      }
+      //fetchData
+      fetchData(vUser)
+      //validate Data
+      let vStatusData = validateData(vUser)
+      if(vStatusData){
+        //initilize xmlhttp
+        var XmlHttpHistoryDice = new XMLHttpRequest();
+        callApiToGetHistoryDices(vUser,XmlHttpHistoryDice)
+        XmlHttpHistoryDice.onreadystatechange =function(){
+          if(XmlHttpHistoryDice.readyState == gREQUEST_READY_STATUS_FINISH_AND_OK){
+            if(XmlHttpHistoryDice.status == gREQUEST_STATUS_OK){
+              let vDiceHistoryObject = JSON.parse(XmlHttpHistoryDice.responseText)
+              handleResponse(vDiceHistoryObject)
+            }else{
+              console.error("Gọi api thất bại, hoặc tên người dùng không tồn tại")
+            }
+          }
+        }
+
+      }
+
+    }
+    function fetchData(paramUser){
+      let vUserNameValue = document.getElementById("user-name").value
+      paramUser.userName = vUserNameValue
+    }
+    function validateData(paramUser){
+      if(paramUser.userName == ""){
+        alert("Tên người dùng chưa có")
+        return false
+      }
+      return true
+    }
+    function callApiToGetHistoryDices(paramUser,paramAPI){
+      let vApiUrl = gBASE_URL + "/dice-history?username=" +paramUser.userName
+      paramAPI.open("GET",vApiUrl,true)
+      paramAPI.send()
+    }
+    function handleResponse(paramApiDices){
+      var vDiceTable = document.getElementById("table-dice-history")
+      var vDiceTableTbody = document.getElementsByTagName("tbody")[0]
+      vDiceTableTbody.innerHTML ="";
+      for(var bIterator  = 0 ; bIterator < paramApiDices.dices.length ; ++bIterator){
+        var vNewRol = vDiceTableTbody.insertRow(gEND_OF_ROW_COL)
+        var vGamesCells = vNewRol.insertCell(g_COL_GAME)
+        var vDicesCells = vNewRol.insertCell(g_COL_DICES)
+        vGamesCells.innerHTML = bIterator + 1
+        vDicesCells.innerHTML = paramApiDices.dices[bIterator]
+      }
+    }
   </script>
 
 
