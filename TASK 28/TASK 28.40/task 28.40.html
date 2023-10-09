@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <title>Task 28.40</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Lucky Dice User Name</h2>
+        <div class="form-group">
+            <label for="inp-user-name">User Name:</label>
+            <input type="text" name="inp-user-name" class="form-control" placeholder="Enter your User Name here"
+                id="inp-user-name">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" onclick="onCLickShowVoucherHistory()">Show Voucher History Table</button>
+        </div>
+        <table id="table-voucher-history" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Mã giảm giá</th>
+                    <th>Phần trăm giảm giá</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+    </div>
+    <script>
+        //region 1 biến toàn cục
+        const gREQUEST_STATUS_OK = 200;
+        const gREQUEST_READY_STATUS_FINISH_AND_OK = 4;
+        const gBASE_URL = "http://203.171.20.210:8080/devcamp-lucky-dice";
+        const g_ADD_END_OF_TABLE= -1;
+        const g_COL_VOUCHER = 0;
+        const g_COL_DISCOUNT = 1;
+        
+        //region 3 Hàm sự kiện
+        function onCLickShowVoucherHistory(){ debugger;
+            ApiGetHistoryVoucher();
+        }
+        //region 4 hàm phụ, phục phụ cho sự kiện
+        function ApiGetHistoryVoucher() { debugger;
+
+            var vUser = {
+                UserName: ""
+            }
+            //fetch data 
+            fetchData(vUser)
+            //validate Data
+            let vStatusData = validateData(vUser)
+            if (vStatusData) {
+                let XmlHttpHistoryVoucher = new XMLHttpRequest();
+                //Call api
+                getApi(XmlHttpHistoryVoucher,vUser)
+                // 4 stages watting 
+                XmlHttpHistoryVoucher.onreadystatechange=function(){
+                    if(this.readyState == gREQUEST_READY_STATUS_FINISH_AND_OK){
+                        if(this.status == gREQUEST_STATUS_OK){
+                            responseHandle(XmlHttpHistoryVoucher);
+                        }else{
+                            console.error("Gọi api thất bại, hoặc tên người dùng không tồn tại")
+                        }
+                    }
+                }
+            }
+        }
+        function fetchData(paramUser) {
+            let vUserValue = document.getElementById("inp-user-name").value
+            paramUser.UserName = vUserValue
+        }
+        function validateData(paramUser) {
+            if (paramUser.UserName == "") {
+                alert("Chưa điền tên người dùng")
+                return false
+            }
+            return true
+        }
+        function getApi(paramVoucherXml,paramUser) {
+            var vURL = gBASE_URL + "/voucher-history?username=" +paramUser.UserName
+            paramVoucherXml.open("GET",vURL,true)
+            paramVoucherXml.send()
+        }
+        function responseHandle(paramAPI){ debugger;
+            // transfer json
+            var vVoucher = JSON.parse(paramAPI.responseText)
+            //truy xuat bang 
+            var vVoucherTableElement = document.getElementById("inp-user-name")
+            var vVoucherTbody = document.getElementsByTagName("tbody")[0]
+
+            for(var bIterator = 0 ; bIterator < vVoucher.vouchers.length ; bIterator ++){
+
+                //with each loops - Create a new row 
+                var vNewRow = vVoucherTbody.insertRow(g_ADD_END_OF_TABLE)
+                //with each loops - Create a new Cells on each row
+                var vVoucherCells = vNewRow.insertCell(g_COL_VOUCHER)
+                var vDiscountCells = vNewRow.insertCell(g_COL_DISCOUNT)
+
+                vVoucherCells.innerHTML = vVoucher.vouchers[bIterator].maVoucher
+                vDiscountCells.innerHTML =vVoucher.vouchers[bIterator].phanTramGiamGia
+            }
+            
+        }
+    
+    </script>
+</body>
+
+</html>
