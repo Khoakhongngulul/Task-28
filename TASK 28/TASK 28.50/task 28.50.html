@@ -16,10 +16,11 @@
             <h2 class="mt-4">Lucky Dice Username</h2>
             <label for="inp-username">User Name:</label>
             <input type="text" name="username" id="inp-user-name" class="form-control" placeholder="Enter your user name here">
-            <button class="btn btn-primary mt-2">Show present History in table</button>
         </div>
-        <div class="row">
-            <table class="table table-bordered table-hover table-striped">
+        <div class="form-group">
+            <button class="btn btn-primary" onclick="onClickShowPresentHistory()">Show Present History table</button>
+        </div>
+            <table class="table table-bordered table-hover table-striped" id="prize-table-history">
                 <thead>
                     <tr>
                         <th>Game</th>
@@ -29,8 +30,81 @@
                 <tbody>
                 </tbody>
             </table>
-        </div>
+
     </div>
 </body>
+<script>
+    //region 1
+    const gREQUEST_STATUS_OK = 200;
+    const gREQUEST_READY_STATUS_FINISH_AND_OK = 4;
+    const gBASE_URL = "http://203.171.20.210:8080/devcamp-lucky-dice";
+    const g_COL_GAME = 0
+    const g_COL_PRESENT = 1
+    const g_ADD_NEW_ROW = -1
+    //region 2
+    //region 3
+    function onClickShowPresentHistory(){ debugger
+        ApiPrizes()
+    }
+    //region 4
+    function ApiPrizes(){ debugger
+        var vUser = {
+            username:""
+        }
+        //fetch Data
+        fetchData(vUser)
+        //validate Data
+        var vStatus=validateData(vUser)
+        if(vStatus){
+            //initilize Api
+            var XmlHttpPrizes = new XMLHttpRequest();
+            //call api
+            callApi(XmlHttpPrizes,vUser)
+            XmlHttpPrizes.onreadystatechange=function(){ debugger
+                if(this.readyState == gREQUEST_READY_STATUS_FINISH_AND_OK){
+                    if(this.status == gREQUEST_STATUS_OK){
+                        handleResponse(XmlHttpPrizes)
+                    }else{
+                        console.error("Lỗi gọi api, hoặc do người dùng không tồn tại")
+                    }
+                }
+                
+            }
+        }
+        
+    }
+    function fetchData(paramUser){
+        var vUserName = document.getElementById("inp-user-name").value
+        paramUser.username =vUserName
+    }
+    function validateData(paramUser){
+        if(paramUser.username == ""){
+            alert("Bạn chưa nhập tên người dùng")
+            return false
+        }
+        return true
+    }
+    function callApi(paramApi,paramUser){
+        var vURL = gBASE_URL+"/prize-history?username="+paramUser.username
+        paramApi.open("GET",vURL,true)
+        paramApi.send()
+    }
+    function handleResponse(paramApi){
+        //JSON DATA 
+        var vPresent = JSON.parse(paramApi.responseText)
+        //truy xuat bang
+        var vTablePrize = document.getElementById("prize-table-history")
+        var vTableTbody = document.getElementsByTagName("tbody")[0]
+       for(var bIterator = 0 ; bIterator <vPresent.prizes.length;bIterator++ ){
+         //create row
+       var vCreateRow = vTableTbody.insertRow(g_ADD_NEW_ROW)
+        //create cells
+        var vGameCells = vCreateRow.insertCell(g_COL_GAME)
+        var vPresentCells = vCreateRow.insertCell(g_COL_PRESENT)
+        vGameCells.innerHTML = bIterator+1
+        vPresentCells.innerHTML = vPresent.prizes[bIterator]
+       }
+    }
+</script>
 
 </html>
